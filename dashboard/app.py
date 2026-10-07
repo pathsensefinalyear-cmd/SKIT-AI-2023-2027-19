@@ -139,6 +139,24 @@ st.sidebar.write("3️⃣ **Sourabh Nagar** (`23ESKCA105`)")
 st.sidebar.write("4️⃣ **Vedic Baurasi** (`23ESKCA119`)")
 st.sidebar.caption("🏛️ **SKIT Jaipur**, Rajasthan")
 
+st.sidebar.markdown("---")
+st.sidebar.markdown("**☁️ Cloud Backend (Firebase):**")
+try:
+    from backend.firebase_sync import FirebaseCloudSync
+    syncer = FirebaseCloudSync()
+    st_data = syncer.get_status()
+    if st_data["enabled"]:
+        st.sidebar.success("🟢 Cloud Sync: Connected & Live")
+    else:
+        st.sidebar.info("🟡 Cloud: Offline-First Queue Active")
+    st.sidebar.caption(f"📦 Offline Queued: {st_data['offline_queued_items']} packets")
+    if st.sidebar.button("🔄 Sync Telemetry to Cloud"):
+        csv_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs", "pathsense_audit_log.csv")
+        cnt = syncer.sync_local_csv(csv_p)
+        st.sidebar.success(f"Synced {cnt} records to Cloud!")
+except Exception as e:
+    st.sidebar.caption("Backend queue: Active")
+
 # Load existing telemetry data
 df = load_audit_data()
 

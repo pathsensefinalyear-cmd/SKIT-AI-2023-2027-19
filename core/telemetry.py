@@ -128,3 +128,12 @@ class TelemetryLogger:
         }
         with open(self.json_path, "w", encoding="utf-8") as f:
             json.dump(latest_data, f, indent=2, default=lambda o: bool(o) if hasattr(o, '__bool__') else str(o))
+
+        # 3. Cloud Sync (Offline-first resilient push)
+        try:
+            from backend.firebase_sync import FirebaseCloudSync
+            if not hasattr(self, "_firebase_syncer"):
+                self._firebase_syncer = FirebaseCloudSync()
+            self._firebase_syncer.push_point(self._point_to_dict(point))
+        except Exception:
+            pass

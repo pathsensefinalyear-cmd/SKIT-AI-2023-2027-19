@@ -1,0 +1,25 @@
+# PathSense: Real-Time Edge-Vision for Road Condition Mapping
+# Core Dependencies for PathSense System
+
+# Deep Learning & Vision Engine
+ultralytics>=8.1.0
+torch>=2.0.0
+torchvision>=0.15.0
+opencv-python>=4.8.0
+pillow>=10.0.0
+
+# Mathematical & Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Frontend Dashboard & Geospatial Mapping
+streamlit>=1.30.0
+pydeck>=0.8.0
+folium>=0.15.0
+streamlit-folium>=0.16.0
+
+# Utility & Serialization
+tqdm>=4.66.0
+pyyaml>=6.0.1
+requests>=2.31.0

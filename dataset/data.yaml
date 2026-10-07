@@ -1,0 +1,15 @@
+# PathSense YOLOv8 Dataset Configuration
+# Generated automatically by PathSense Dataset Pipeline
+# Academic Minor Project - SKIT Jaipur, CS-AI (7th Sem)
+
+path: C:/Users/nagar/OneDrive/Desktop/pathsense/dataset
+train: images/train
+val: images/val
+test: images/test
+
+# Classes (4)
+names:
+  0: Longitudinal Crack
+  1: Transverse Crack
+  2: Alligator Crack
+  3: Pothole

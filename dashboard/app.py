@@ -38,22 +38,27 @@ st.set_page_config(
 st.markdown("""
 <style>
     .block-container {
-        padding-top: 1.8rem;
+        padding-top: 4.2rem !important;
         padding-bottom: 2rem;
     }
     .main-title {
-        font-size: 2.3rem;
+        font-size: 2.35rem;
         font-weight: 800;
         background: linear-gradient(90deg, #38BDF8, #818CF8, #34D399);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        display: block;
+        padding-top: 0.5rem;
+        padding-bottom: 0.4rem;
+        margin-top: 0.2rem;
         margin-bottom: 0.2rem;
-        line-height: 1.2;
+        line-height: 1.35;
     }
     .sub-title {
         font-size: 1.05rem;
         color: #94A3B8;
         margin-bottom: 1.4rem;
+        line-height: 1.4;
     }
     .metric-card {
         background: #1E293B;
@@ -127,7 +132,7 @@ view_mode = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("**Team Details (CS-AI, 6th Sem):**")
+st.sidebar.markdown("**Team Details (CS-AI, 7th Sem):**")
 st.sidebar.write("1️⃣ **Sharafat Khan** (`23ESKCA098`)")
 st.sidebar.write("2️⃣ **Soham Manocha** (`23ESKCA102`)")
 st.sidebar.write("3️⃣ **Sourabh Nagar** (`23ESKCA105`)")

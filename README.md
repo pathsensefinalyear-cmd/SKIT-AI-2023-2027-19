@@ -11,7 +11,7 @@
 
 ## 🏛️ Project & Team Information
 - **Institution:** Swami Keshvanand Institute of Technology, Management & Gramothan (SKIT), Jaipur, Rajasthan
-- **Department:** Computer Science & Artificial Intelligence (CS-AI), 6th Semester
+- **Department:** Computer Science & Artificial Intelligence (CS-AI), 7th Semester
 - **Team Members:**
   1. **Sharafat Khan** (`23ESKCA098`) - AI Model Training & Dataset Engineering (RDD2022)
   2. **Soham Manocha** (`23ESKCA102`) - Edge Inference & Cloud-to-Edge Pipeline Optimization

@@ -1,5 +1,5 @@
 # STUDENT MINOR PROJECT PROPOSAL & SYNOPSIS
-## Academic Session 2026 | Sixth Semester (CS-AI)
+## Academic Session 2026 | Seventh Semester (CS-AI)
 
 ---
 

@@ -1,6 +1,6 @@
 # PathSense: Faculty Viva Voce & Defense Guide
 ## Minor Project Evaluation | Swami Keshvanand Institute of Technology (SKIT), Jaipur
-### Team Presenters: 1. Sharafat Khan (23ESKCA098), 2. Soham Manocha (23ESKCA102), 3. Sourabh Nagar (23ESKCA105), 4. Vedic Baurasi (23ESKCA119) [6th Sem, CS-AI]
+### Team Presenters: 1. Sharafat Khan (23ESKCA098), 2. Soham Manocha (23ESKCA102), 3. Sourabh Nagar (23ESKCA105), 4. Vedic Baurasi (23ESKCA119) [7th Sem, CS-AI]
 
 ---
 

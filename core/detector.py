@@ -23,6 +23,10 @@ class RoadAnomalyDetector:
     }
 
     def __init__(self, model_path: Optional[str] = None, conf_threshold: float = 0.35, device: str = "cpu"):
+        if model_path is None:
+            default_weights = os.path.join(os.path.dirname(__file__), "best.pt")
+            if os.path.exists(default_weights):
+                model_path = default_weights
         self.model_path = model_path
         self.conf_threshold = conf_threshold
         self.device = device

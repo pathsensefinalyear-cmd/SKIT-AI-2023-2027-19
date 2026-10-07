@@ -27,3 +27,6 @@ desktop.ini
 
 # Local runtime logs & cache
 .streamlit/
+*.db
+*.sqlite3
+logs/firebase_offline_queue.json

@@ -1,0 +1,8 @@
+{
+  "project_name": "pathsense-road-ai",
+  "database_url": "https://pathsense-road-ai-default-rtdb.firebaseio.com/",
+  "auth_token": "",
+  "enabled": false,
+  "offline_sync_batch_size": 25,
+  "note": "To enable real cloud sync: Set 'enabled' to true and update 'database_url' with your free Google Firebase Realtime Database URL. When 'enabled' is false, the system automatically uses the robust Offline-First Queue mode without failing."
+}

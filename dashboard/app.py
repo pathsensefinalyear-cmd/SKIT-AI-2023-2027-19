@@ -403,13 +403,53 @@ if view_mode == "🗺️ Geospatial Condition Heatmap":
         )
         st.pydeck_chart(deck)
 
-    # Filtered hazard list
+    # Filtered hazard list (PyArrow-free resilient table)
     st.markdown("#### 🚨 High-Priority Hazard Hotspots Identified (Sector 7 & Ramnagariya)")
     bad_roads = df[df["smoothness_index"] < 60.0][["timestamp", "latitude", "longitude", "smoothness_index", "speed_kmh", "road_status", "alert_distance_m"]]
     if not bad_roads.empty:
-        st.dataframe(bad_roads.head(10), use_container_width=True)
+        html_rows = ""
+        for _, r in bad_roads.head(10).iterrows():
+            si = float(r['smoothness_index'])
+            if si < 35.0:
+                badge = '<span style="background:#EF444422; color:#EF4444; border:1px solid #EF4444; padding:2px 8px; border-radius:4px; font-weight:700;">CRITICAL / SEVERE</span>'
+            elif si < 50.0:
+                badge = '<span style="background:#F9731622; color:#F97316; border:1px solid #F97316; padding:2px 8px; border-radius:4px; font-weight:700;">POOR / HIGH DAMAGE</span>'
+            else:
+                badge = '<span style="background:#EAB30822; color:#EAB308; border:1px solid #EAB308; padding:2px 8px; border-radius:4px; font-weight:700;">FAIR / MODERATE</span>'
+
+            html_rows += f"""
+            <tr style="border-bottom: 1px solid #1E293B;">
+                <td style="padding: 10px 12px; color: #94A3B8;">{r['timestamp']}</td>
+                <td style="padding: 10px 12px; font-family: monospace; color: #38BDF8;">{r['latitude']:.4f}° N, {r['longitude']:.4f}° E</td>
+                <td style="padding: 10px 12px; font-weight: 700; color: #F1F5F9;">{si:.1f} / 100</td>
+                <td style="padding: 10px 12px; color: #CBD5E1;">{r['speed_kmh']:.1f} km/h</td>
+                <td style="padding: 10px 12px;">{badge}</td>
+                <td style="padding: 10px 12px; color: #FACC15; font-weight: 600;">{r['alert_distance_m']:.1f} m</td>
+            </tr>
+            """
+
+        table_html = f"""
+        <div style="overflow-x: auto; border: 1px solid #334155; border-radius: 8px; margin-top: 8px; margin-bottom: 16px;">
+            <table style="width: 100%; border-collapse: collapse; background: #0F172A; font-size: 0.88rem; text-align: left;">
+                <thead>
+                    <tr style="background: #1E293B; border-bottom: 2px solid #38BDF8; color: #38BDF8;">
+                        <th style="padding: 10px 12px;">Timestamp</th>
+                        <th style="padding: 10px 12px;">GPS Coordinates</th>
+                        <th style="padding: 10px 12px;">Smoothness Index</th>
+                        <th style="padding: 10px 12px;">Speed</th>
+                        <th style="padding: 10px 12px;">Road Status</th>
+                        <th style="padding: 10px 12px;">Stopping Buffer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {html_rows}
+                </tbody>
+            </table>
+        </div>
+        """
+        st.markdown(table_html, unsafe_allow_html=True)
     else:
-        st.success("No severe hazards detected along the survey route.")
+        st.success("✅ No severe hazards detected along the survey route.")
 
 
 # -------------------------------------------------------------

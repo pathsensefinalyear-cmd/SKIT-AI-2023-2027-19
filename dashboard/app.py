@@ -411,34 +411,84 @@ if view_mode == "🗺️ Geospatial Condition Heatmap":
         for _, r in bad_roads.head(10).iterrows():
             si = float(r['smoothness_index'])
             if si < 35.0:
-                badge = '<span style="background:#EF444422; color:#EF4444; border:1px solid #EF4444; padding:2px 8px; border-radius:4px; font-weight:700;">CRITICAL / SEVERE</span>'
+                badge = '<span style="background:rgba(239,68,68,0.2); color:#EF4444; border:1px solid #EF4444; padding:3px 8px; border-radius:4px; font-weight:700;">CRITICAL / SEVERE</span>'
             elif si < 50.0:
-                badge = '<span style="background:#F9731622; color:#F97316; border:1px solid #F97316; padding:2px 8px; border-radius:4px; font-weight:700;">POOR / HIGH DAMAGE</span>'
+                badge = '<span style="background:rgba(249,115,22,0.2); color:#F97316; border:1px solid #F97316; padding:3px 8px; border-radius:4px; font-weight:700;">POOR / HIGH DAMAGE</span>'
             else:
-                badge = '<span style="background:#EAB30822; color:#EAB308; border:1px solid #EAB308; padding:2px 8px; border-radius:4px; font-weight:700;">FAIR / MODERATE</span>'
+                badge = '<span style="background:rgba(234,179,8,0.2); color:#EAB308; border:1px solid #EAB308; padding:3px 8px; border-radius:4px; font-weight:700;">FAIR / MODERATE</span>'
+
+            # Human-friendly timestamp
+            raw_ts = str(r['timestamp'])
+            try:
+                if '.' in raw_ts and float(raw_ts) > 1000000000:
+                    import datetime
+                    ts_display = datetime.datetime.fromtimestamp(float(raw_ts)).strftime("%d Oct %H:%M:%S")
+                else:
+                    ts_display = raw_ts
+            except Exception:
+                ts_display = raw_ts
 
             html_rows += f"""
-            <tr style="border-bottom: 1px solid #1E293B;">
-                <td style="padding: 10px 12px; color: #94A3B8;">{r['timestamp']}</td>
-                <td style="padding: 10px 12px; font-family: monospace; color: #38BDF8;">{r['latitude']:.4f}° N, {r['longitude']:.4f}° E</td>
-                <td style="padding: 10px 12px; font-weight: 700; color: #F1F5F9;">{si:.1f} / 100</td>
-                <td style="padding: 10px 12px; color: #CBD5E1;">{r['speed_kmh']:.1f} km/h</td>
-                <td style="padding: 10px 12px;">{badge}</td>
-                <td style="padding: 10px 12px; color: #FACC15; font-weight: 600;">{r['alert_distance_m']:.1f} m</td>
+            <tr style="border-bottom:1px solid #1E293B;">
+                <td style="padding:10px 14px; color:#94A3B8;">{ts_display}</td>
+                <td style="padding:10px 14px; font-family:monospace; color:#38BDF8;">{r['latitude']:.4f}° N, {r['longitude']:.4f}° E</td>
+                <td style="padding:10px 14px; font-weight:700; color:#F1F5F9;">{si:.1f} / 100</td>
+                <td style="padding:10px 14px; color:#CBD5E1;">{r['speed_kmh']:.1f} km/h</td>
+                <td style="padding:10px 14px;">{badge}</td>
+                <td style="padding:10px 14px; color:#FACC15; font-weight:600;">{r['alert_distance_m']:.1f} m</td>
             </tr>
             """
 
         table_html = f"""
-        <div style="overflow-x: auto; border: 1px solid #334155; border-radius: 8px; margin-top: 8px; margin-bottom: 16px;">
-            <table style="width: 100%; border-collapse: collapse; background: #0F172A; font-size: 0.88rem; text-align: left;">
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        <style>
+            * {{ box-sizing: border-box; }}
+            body {{
+                margin: 0;
+                padding: 0;
+                background-color: transparent;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                color: #E2E8F0;
+            }}
+            .table-container {{
+                overflow-x: auto;
+                border: 1px solid #334155;
+                border-radius: 8px;
+                background: #0F172A;
+            }}
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.85rem;
+                text-align: left;
+            }}
+            th {{
+                background: #1E293B;
+                border-bottom: 2px solid #38BDF8;
+                color: #38BDF8;
+                padding: 10px 14px;
+                font-weight: 600;
+                white-space: nowrap;
+            }}
+            tr:hover {{
+                background-color: rgba(30, 41, 59, 0.6);
+            }}
+        </style>
+        </head>
+        <body>
+        <div class="table-container">
+            <table>
                 <thead>
-                    <tr style="background: #1E293B; border-bottom: 2px solid #38BDF8; color: #38BDF8;">
-                        <th style="padding: 10px 12px;">Timestamp</th>
-                        <th style="padding: 10px 12px;">GPS Coordinates</th>
-                        <th style="padding: 10px 12px;">Smoothness Index</th>
-                        <th style="padding: 10px 12px;">Speed</th>
-                        <th style="padding: 10px 12px;">Road Status</th>
-                        <th style="padding: 10px 12px;">Stopping Buffer</th>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>GPS Coordinates</th>
+                        <th>Smoothness Index</th>
+                        <th>Vehicle Speed</th>
+                        <th>Road Condition</th>
+                        <th>Stopping Buffer</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -446,8 +496,10 @@ if view_mode == "🗺️ Geospatial Condition Heatmap":
                 </tbody>
             </table>
         </div>
+        </body>
+        </html>
         """
-        st.markdown(table_html, unsafe_allow_html=True)
+        components.html(table_html, height=360, scrolling=True)
     else:
         st.success("✅ No severe hazards detected along the survey route.")
 

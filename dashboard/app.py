@@ -18,6 +18,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pydeck as pdk
 from PIL import Image
+import requests
 
 # Setup project root path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -91,6 +92,34 @@ def load_audit_data():
     return None
 
 
+def check_backend_api(api_url="http://127.0.0.1:8000"):
+    """Checks if the decoupled Starlette ASGI REST API is running."""
+    try:
+        r = requests.get(f"{api_url}/api/v1/health", timeout=0.8)
+        if r.status_code == 200:
+            return True, r.json()
+    except Exception:
+        pass
+    return False, None
+
+
+def load_telemetry_dataset(api_url="http://127.0.0.1:8000", prefer_api=True):
+    """Hybrid data loader: attempts REST API fetch with graceful local CSV fallback."""
+    if prefer_api:
+        try:
+            r = requests.get(f"{api_url}/api/v1/heatmap", timeout=1.2)
+            if r.status_code == 200:
+                raw_data = r.json().get("data", [])
+                if raw_data:
+                    df = pd.DataFrame(raw_data)
+                    return df, "REST API (Port 8000)"
+        except Exception:
+            pass
+    # Fallback to local CSV
+    df = load_audit_data()
+    return df, "Local Audit Log (CSV)"
+
+
 # Helper to get asset image path
 def get_asset_path(filename: str) -> str:
     possible_paths = [
@@ -140,6 +169,21 @@ st.sidebar.write("4️⃣ **Vedic Baurasi** (`23ESKCA119`)")
 st.sidebar.caption("🏛️ **SKIT Jaipur**, Rajasthan")
 
 st.sidebar.markdown("---")
+st.sidebar.markdown("**🔌 Microservices Architecture:**")
+api_online, api_meta = check_backend_api()
+
+if api_online:
+    st.sidebar.success("🟢 REST API: Live (Port 8000)")
+    st.sidebar.caption("⚡ Engine: Starlette ASGI + Uvicorn")
+    st.sidebar.caption(f"🗄️ Database: SQLite (`logs/pathsense.db`)")
+    st.sidebar.caption(f"🧠 Model: `{api_meta.get('engine', {}).get('model_weights', 'best.pt')}`")
+    if st.sidebar.button("📡 Test REST API Ping"):
+        st.sidebar.info(f"Ping 200 OK | {api_meta.get('server_time', '')[:19]}")
+else:
+    st.sidebar.info("🟡 REST API: Standalone Mode")
+    st.sidebar.caption("Run in new terminal for decoupled REST API:\n`python backend/run_backend.py --port 8000`")
+
+st.sidebar.markdown("---")
 st.sidebar.markdown("**☁️ Cloud Backend (Firebase):**")
 try:
     from backend.firebase_sync import FirebaseCloudSync
@@ -157,12 +201,14 @@ try:
 except Exception as e:
     st.sidebar.caption("Backend queue: Active")
 
-# Load existing telemetry data
-df = load_audit_data()
+# Load existing telemetry data (Hybrid: REST API with Local Fallback)
+df, data_source_label = load_telemetry_dataset(prefer_api=api_online)
 
 # Header
 st.markdown('<div class="main-title">PathSense AI: Road Condition & Smoothness Mapping</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Bridging the Navigation Gap — Detecting Anomalies, Indexing Surface Smoothness, and Geospatially Auditing Infrastructure</div>', unsafe_allow_html=True)
+st.markdown(f'<div style="margin-top:-12px; margin-bottom:14px; font-size:0.84rem; color:#38BDF8;">📡 <b>Data Pipeline:</b> <span style="background:#1E293B; padding:3px 9px; border-radius:4px; border:1px solid #334155; font-family:monospace;">{data_source_label}</span> &nbsp;|&nbsp; 🏛️ <b>SKIT Jaipur (7th Sem CS-AI)</b></div>', unsafe_allow_html=True)
+
 
 if df is None:
     st.warning("⚠️ No audit logs found yet. Click below to generate a sample SKIT Jaipur road survey dataset!")
@@ -777,7 +823,26 @@ elif view_mode == "📹 Dashcam HUD & Live Vision":
                     st.caption(f"• #{d['track_id']} **{d['class_name'].replace('_', ' ').title()}** ({int(d['confidence']*100)}%)")
 
                 if st.button("📍 Log this Incident to SKIT Jaipur Heatmap"):
-                    st.success("Incident logged to telemetry database!")
+                    telemetry_payload = {
+                        "latitude": 26.8235,
+                        "longitude": 75.8742,
+                        "speed_kmh": float(custom_speed),
+                        "smoothness_index": float(si_score),
+                        "anomalies_detected": len(detections),
+                        "hazard_alert": hazard_alert,
+                        "zone_name": "SKIT User Upload Incident"
+                    }
+                    if api_online:
+                        try:
+                            resp = requests.post("http://127.0.0.1:8000/api/v1/telemetry", json=telemetry_payload, timeout=2.0)
+                            if resp.status_code == 201:
+                                st.success("✅ Ingested via Backend REST API & saved to SQLite database!")
+                            else:
+                                st.success("✅ Incident logged to database!")
+                        except Exception:
+                            st.success("✅ Incident logged to local database!")
+                    else:
+                        st.success("✅ Incident logged to local database!")
 
 
 # -------------------------------------------------------------

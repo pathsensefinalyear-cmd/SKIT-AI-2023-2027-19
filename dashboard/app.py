@@ -234,6 +234,9 @@ def get_point_color(si):
         return [239, 68, 68, 245]    # Red (Critical Pothole)
 
 
+if "alert_distance_m" not in df.columns:
+    df["alert_distance_m"] = df["speed_kmh"].apply(SmoothnessIndexCalculator.calculate_dynamic_alert_distance)
+
 df["color"] = df["smoothness_index"].apply(get_point_color)
 avg_si = df["smoothness_index"].mean()
 total_potholes = df["anomalies_detected"].max()
@@ -350,11 +353,11 @@ if view_mode == "🗺️ Geospatial Condition Heatmap":
 
                 // Prominent Landmarks around SKIT Jaipur
                 var landmarks = [
-                    {{ lat: 26.8225, lon: 75.8640, title: "🏛️ SKIT Campus (Swami Keshvanand Inst. of Technology)", desc: "Main Engineering Academic Blocks & Central Lawn" }},
-                    {{ lat: 26.8218, lon: 75.8635, title: "🎓 SKIT Main Entrance Gate", desc: "Ramnagariya Road Access" }},
-                    {{ lat: 26.8240, lon: 75.8735, title: "🏘️ Sector 7 Jagatpura Houses & Enclave", desc: "Residential Colony • Severe Pothole Zone" }},
-                    {{ lat: 26.8275, lon: 75.8710, title: "🛣️ Mahal Road 6-Lane Expressway Corridor", desc: "Major Link to Jagatpura Circle & Ring Road" }},
-                    {{ lat: 26.8180, lon: 75.8660, title: "⭕ Ramnagariya Circle & Local Market", desc: "Commercial Shops & Bus Route" }}
+                    {{ lat: 26.8225, lon: 75.8640, title: "🏛️ SKIT Campus", desc: "Main Engineering Academic Blocks & Central Lawn" }},
+                    {{ lat: 26.8218, lon: 75.8635, title: "🎓 SKIT Gate", desc: "Ramnagariya Road Main Access" }},
+                    {{ lat: 26.8240, lon: 75.8735, title: "🏘️ Sector 7", desc: "Residential Colony • Pothole Hazard Zone" }},
+                    {{ lat: 26.8275, lon: 75.8710, title: "🛣️ Mahal Road", desc: "6-Lane Corridor to Jagatpura Circle" }},
+                    {{ lat: 26.8180, lon: 75.8660, title: "⭕ Ramnagariya", desc: "Commercial Market & Bus Route" }}
                 ];
 
                 landmarks.forEach(function(lm) {{

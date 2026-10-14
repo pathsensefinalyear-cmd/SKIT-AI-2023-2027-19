@@ -151,7 +151,7 @@ def get_heatmap_records() -> List[Dict[str, Any]]:
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT id, timestamp, latitude, longitude, smoothness_index, road_status, speed_kmh, anomalies_detected, hazard_alert
+    SELECT id, timestamp, latitude, longitude, smoothness_index, road_status, speed_kmh, anomalies_detected, hazard_alert, alert_distance_m
     FROM telemetry_logs
     ORDER BY id ASC
     """)

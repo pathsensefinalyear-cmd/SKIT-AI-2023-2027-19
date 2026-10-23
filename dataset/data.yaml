@@ -2,7 +2,7 @@
 # Generated automatically by PathSense Dataset Pipeline
 # Academic Minor Project - SKIT Jaipur, CS-AI (7th Sem)
 
-path: C:/Users/nagar/OneDrive/Desktop/pathsense/dataset
+path: ./dataset
 train: images/train
 val: images/val
 test: images/test

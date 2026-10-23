@@ -1,4 +1,4 @@
-"""
+﻿"""
 PathSense Core: Geospatial Telemetry & GPS Tracking
 Author: Vedic Baurasi & Soham Manocha (SKIT Jaipur, CS-AI)
 
@@ -137,3 +137,24 @@ class TelemetryLogger:
             self._firebase_syncer.push_point(self._point_to_dict(point))
         except Exception:
             pass
+        # 4. Local SQLite Database Ingestion
+        try:
+            from backend import database as db
+            import datetime
+            ts_val = float(point.timestamp)
+            ts_str = datetime.datetime.fromtimestamp(ts_val).strftime("%Y-%m-%d %H:%M:%S") if ts_val > 1000000000 else str(point.timestamp)
+            db.insert_telemetry({
+                "timestamp": ts_str,
+                "latitude": float(point.latitude),
+                "longitude": float(point.longitude),
+                "speed_kmh": float(point.speed_kmh),
+                "smoothness_index": float(point.smoothness_index),
+                "road_status": str(point.road_status),
+                "anomalies_detected": int(point.anomalies_detected),
+                "hazard_alert": 1 if point.hazard_alert else 0,
+                "alert_distance_m": float(point.alert_distance_m),
+                "zone_name": "SKIT Jaipur Circuit"
+            })
+        except Exception:
+            pass
+

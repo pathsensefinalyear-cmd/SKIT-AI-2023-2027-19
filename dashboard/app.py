@@ -78,8 +78,6 @@ def load_audit_data():
     candidates = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs", "pathsense_audit_log.csv"),
         os.path.join("logs", "pathsense_audit_log.csv"),
-        r"C:\Users\nagar\OneDrive\Desktop\pathsense\logs\pathsense_audit_log.csv",
-        r"C:\Users\nagar\.gemini\antigravity\scratch\pathsense\logs\pathsense_audit_log.csv"
     ]
     for path in candidates:
         if os.path.exists(path):
@@ -125,8 +123,6 @@ def get_asset_path(filename: str) -> str:
     possible_paths = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", filename),
         os.path.join("dashboard", "assets", filename),
-        os.path.join(r"C:\Users\nagar\OneDrive\Desktop\pathsense\dashboard\assets", filename),
-        os.path.join(r"C:\Users\nagar\.gemini\antigravity\scratch\pathsense\dashboard\assets", filename)
     ]
     for p in possible_paths:
         if os.path.exists(p):

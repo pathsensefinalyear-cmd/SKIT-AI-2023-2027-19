@@ -1,0 +1,1 @@
+# PathSense Core Module

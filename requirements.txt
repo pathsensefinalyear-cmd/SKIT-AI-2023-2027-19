@@ -19,6 +19,11 @@ pydeck>=0.8.0
 folium>=0.15.0
 streamlit-folium>=0.16.0
 
+# Backend REST API & Server
+starlette>=0.27.0
+uvicorn>=0.23.0
+httpx>=0.24.0
+
 # Utility & Serialization
 tqdm>=4.66.0
 pyyaml>=6.0.1
